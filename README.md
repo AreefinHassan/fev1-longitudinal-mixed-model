@@ -1,5 +1,9 @@
 # FEV1 Longitudinal Mixed Model
 
+![SAS](https://img.shields.io/badge/SAS-1E5AA8?style=flat-square&logo=sas&logoColor=white)
+![R](https://img.shields.io/badge/R-276DC3?style=flat-square&logo=r&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)
+
 Longitudinal analysis of forced expiratory volume in one second (FEV1) for patients
 in three study arms — drug A, drug C, and placebo — measured at baseline and
 1–8 hours after treatment. The analysis compares repeated-measures mixed models,
@@ -7,6 +11,26 @@ multilevel (random-coefficients) models, and generalized estimating equations
 (GEE), each fitted under several covariance structures.
 
 Course: MATH 6364 Statistical Methods, Fall 2023, University of Texas Rio Grande Valley.
+
+## Key Results
+
+- **Unstructured (UN) covariance wins everywhere.** In the repeated-measures
+  mixed model it has the lowest information criteria: **AIC 342.5, AICC 349.7,
+  BIC 445.0** (vs. CS: AIC 540.9; AR1: AIC 464.0).
+- **Most of the variation is between patients.** The intraclass correlation from
+  the unconditional mean model is **ICC ≈ 0.64** — about 64% of the variance in
+  FEV1 is between patients, which is why random effects are needed.
+- **Drug effects change over time.** In the repeated-measures model, the
+  treatment × time interactions are significant (drug A: p = 0.0069; drug C:
+  p = 0.0160); the main effects of drug and time alone are not.
+- **GEE agrees.** The unstructured working correlation has the lowest QIC
+  (**678.05**) of the three GEE fits.
+
+![Mean FEV1 by time for each study arm](images/fev1-mean-by-time.png)
+
+*Mean FEV1 by time for each study arm. Both drug arms rise after treatment and
+peak around 2 hours; drug A holds its gain longer, while drug C converges back
+toward placebo. Placebo stays comparatively flat.*
 
 ## Data
 
@@ -31,6 +55,12 @@ Course: MATH 6364 Statistical Methods, Fall 2023, University of Texas Rio Grande
 3. **GEE** (PROC GENMOD) with CS, UN, and AR(1) working correlation structures.
    The unstructured working correlation had the lowest QIC (678.05).
 
+![Individual FEV1 profiles by time and patient, for each study arm](images/fev1-individual-profiles.png)
+
+*Individual FEV1 profiles by time and patient for each study arm. Profiles in
+arms A and C rise after treatment; placebo profiles are flatter and more
+variable, with no clear upward trend.*
+
 ## Key findings
 
 - Individual FEV1 profiles rise after treatment in arms A and C, while the
@@ -46,6 +76,12 @@ Course: MATH 6364 Statistical Methods, Fall 2023, University of Texas Rio Grande
 - Assumptions: residuals show slight departures from normality in the tails,
   and variance appears to increase with the predicted mean.
 
+![Residual diagnostics for the unstructured mixed model](images/fev1-residual-diagnostics.png)
+
+*Residual diagnostics for the unstructured mixed model: residuals vs. predicted
+mean, residual histogram with normal curve, and Q–Q plot. Residuals are
+roughly normal with slight departures in the tails.*
+
 ## Files
 
 | Path | Contents |
@@ -55,11 +91,17 @@ Course: MATH 6364 Statistical Methods, Fall 2023, University of Texas Rio Grande
 | `data/fev.csv` | FEV1 data, long format |
 | `data/fev_wide.txt` | FEV1 data, wide format |
 | `data/FEV.sas7bdat` | FEV1 data, SAS dataset |
+| `images/` | Figures from the report: individual profiles, mean FEV1 by time, residual diagnostics |
 
-## Reproducing the analysis
+## How to Run
 
-Requires SAS with PROC MIXED and PROC GENMOD. Run `code/final_project.sas`
-from the repository root; it reads `data/fev.csv`.
+Requires SAS with PROC MIXED and PROC GENMOD.
+
+1. Open `code/final_project.sas` in SAS.
+2. Run it from the repository root — it reads `data/fev.csv` (relative path).
+3. The script reproduces the profile and mean plots, the repeated-measures
+   models under UN / CS / AR(1) covariance structures, the three-step
+   multilevel models, and the GEE fits.
 
 ## Notes
 
